@@ -125,7 +125,7 @@ module.exports.edit = async (req, res) => {
 
 }
 
-module.exports.editpatch = async (req, res) => {
+module.exports.editput = async (req, res) => {
     try {
         console.log(req.body);
         const {
@@ -143,7 +143,49 @@ module.exports.editpatch = async (req, res) => {
         const categoryUpdate = await Category.updateOne({_id: _id}, updateData)
         res.status(201).json({
             message: "Chỉnh sửa thể loại thành công",
-            categoryUpdate
+            data: categoryUpdate
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            error: "404"
+        })
+
+    }
+
+}
+
+module.exports.delete = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id);
+       
+        const category = await Category.updateOne({_id: id}, {deleted: true})
+
+        res.status(201).json({
+            message: "Xóa thể loại thành công thành công",
+            category: category
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            error: "404"
+        })
+
+    }
+
+}
+
+module.exports.deletehard = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id);
+       
+        const category = await Category.deleteOne({_id: id})
+
+        res.status(201).json({
+            message: "Xóa thể loại thành công thành công",
+            category: category
         })
     } catch (error) {
         console.log(error);

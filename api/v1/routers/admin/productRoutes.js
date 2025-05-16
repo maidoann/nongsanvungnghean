@@ -15,7 +15,20 @@ route.get('/detail/:id', controller.detail);
 route.post('/create',
     fileUpload.array('images'),
     uploadMidlewares.upload ,
+    controller.createpost);
+
+// [GET] /api/v1/admin/products/create
+route.get('/create',
     controller.create);
 
+//[GET] /api/v1/admin/products/edit/:id
+route.get('/edit/:id',
+    controller.edit);
+
+// [PUT] /api/v1/admin/products/edit
+route.put('/edit',
+    fileUpload.array('images'),
+    uploadMidlewares.upload ,
+    controller.editput);
 
 module.exports = route;
