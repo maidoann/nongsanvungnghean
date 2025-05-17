@@ -57,11 +57,16 @@ module.exports.index = async (req, res) => {
 module.exports.create = async (req, res) => {
     try {
 
-        const categories = await Category.find({ deleted: false });
+        const categories = await Category.find({
+            deleted: false
+        });
         const tree = createTree.tree(categories); // build dạng cây
 
 
-        res.status(200).json({ success: true, data: tree });
+        res.status(200).json({
+            success: true,
+            data: tree
+        });
     } catch (error) {
         console.log(error);
         res.json({
@@ -73,17 +78,27 @@ module.exports.create = async (req, res) => {
 }
 module.exports.createpost = async (req, res) => {
     try {
-        console.log(req.body);
+
         const {
             name,
             parent_id,
             deleted
         } = req.body;
+        if (req.user) {
+            createdBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
         const newCategory = new Category({
             name,
             parent_id: parent_id || null,
-            deleted
+            deleted,
+            createdBy: createdBy
         })
+        console.log(newCategory);
+
         const savedCategory = await newCategory.save();
         res.status(201).json({
             message: "Thêm thể loại thành công",
@@ -104,10 +119,14 @@ module.exports.edit = async (req, res) => {
         const id = req.params.id;
         console.log(id);
 
-        const categories = await Category.find({ deleted: false });
+        const categories = await Category.find({
+            deleted: false
+        });
         const tree = createTree.tree(categories); // build dạng cây
-        
-        const category = await Category.findOne({_id: id})
+
+        const category = await Category.findOne({
+            _id: id
+        })
 
         res.status(201).json({
             message: "Load dữ liệu thành công",
@@ -127,20 +146,32 @@ module.exports.edit = async (req, res) => {
 
 module.exports.editput = async (req, res) => {
     try {
-        console.log(req.body);
+        if (req.user) {
+            updatedBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
         const {
             _id,
             name,
             parent_id,
             deleted
         } = req.body;
-        let updateData = {parent_id,deleted}
-        if(name){
+        let updateData = {
+            parent_id,
+            deleted,
+            updatedBy: updatedBy
+        }
+        if (name) {
             updateData.name = name
             updateData.slug = await generateUniqueSlugHelper(Category, name)
-            
+
         }
-        const categoryUpdate = await Category.updateOne({_id: _id}, updateData)
+        const categoryUpdate = await Category.updateOne({
+            _id: _id
+        }, updateData)
         res.status(201).json({
             message: "Chỉnh sửa thể loại thành công",
             data: categoryUpdate
@@ -157,10 +188,22 @@ module.exports.editput = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
     try {
+        if (req.user) {
+            updatedBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
         const id = req.params.id;
         console.log(id);
-       
-        const category = await Category.updateOne({_id: id}, {deleted: true})
+
+        const category = await Category.updateOne({
+            _id: id
+        }, {
+            deleted: true,
+            updatedBy: updatedBy
+        })
 
         res.status(201).json({
             message: "Xóa thể loại thành công thành công",
@@ -180,8 +223,10 @@ module.exports.deletehard = async (req, res) => {
     try {
         const id = req.params.id;
         console.log(id);
-       
-        const category = await Category.deleteOne({_id: id})
+
+        const category = await Category.deleteOne({
+            _id: id
+        })
 
         res.status(201).json({
             message: "Xóa thể loại thành công thành công",

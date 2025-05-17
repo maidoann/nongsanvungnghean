@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router();
 const bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
 require('dotenv').config()
 const database = require("./config/database.js");
 
@@ -13,6 +14,7 @@ const port = process.env.PORT
 console.log(port);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser("LHNASDASDAD"))
 database.connect();
 
 // routeAdmin(app);

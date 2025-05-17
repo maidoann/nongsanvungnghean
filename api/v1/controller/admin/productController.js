@@ -1,4 +1,4 @@
-const Product = require('../../models/Products');
+const Product = require('../../models/Product');
 const paginationHelper = require('../../../../helpers/paginationHelper');
 const searchHelper = require('../../../../helpers/searchHelper');
 const Category = require('../../models/Category');
@@ -71,6 +71,13 @@ module.exports.detail = async (req, res) => {
 module.exports.createpost = async (req, res) => {
     try {
         // console.log(req.body);
+        if (req.user) {
+            createdBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
         if (req.body) {
             let productData = {
                 description: req.body.description,
@@ -78,7 +85,8 @@ module.exports.createpost = async (req, res) => {
                 category: req.body.category,
                 harvest_date: req.body.harvest_date,
                 expiration_date: req.body.expiration_date,
-                deleted: req.body.deleted
+                deleted: req.body.deleted,
+                createdBy: createdBy
             }
 
             if (req.body.images) {
@@ -192,6 +200,13 @@ module.exports.edit = async (req, res) => {
 module.exports.editput = async (req, res) => {
     try {
         // console.log(req.body);
+        if (req.user) {
+            updatedBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
         const id = req.body.id;
         if (!id) {
             return res.status(400).json({
@@ -205,7 +220,8 @@ module.exports.editput = async (req, res) => {
                 category: req.body.category,
                 harvest_date: req.body.harvest_date,
                 expiration_date: req.body.expiration_date,
-                deleted: req.body.deleted
+                deleted: req.body.deleted,
+                updatedBy: updatedBy
             }
 
             let imagesList = [];
@@ -267,6 +283,56 @@ module.exports.editput = async (req, res) => {
 
 
 
+    } catch (error) {
+        console.log(error);
+        res.json({
+            error: "404"
+        })
+
+    }
+
+}
+
+module.exports.delete = async (req, res) => {
+    try {
+        if (req.user) {
+            updatedBy = req.user._id
+        }else{
+            return  res.status(401).json({
+                    message: "Chưa xác thực người dùng"
+            });
+        }
+        const id = req.params.id;
+        console.log(id);
+       
+        const product = await Product.updateOne({_id: id}, {deleted: true,updatedBy: updatedBy})
+
+        res.status(201).json({
+            message: "Xóa sản phẩm thành công",
+            data: product
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            error: "404"
+        })
+
+    }
+
+}
+
+
+module.exports.deletehard = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id);
+       
+        const product = await Product.deleteOne({_id: id})
+
+        res.status(201).json({
+            message: "Xóa sản phẩm thành công",
+            data: product
+        })
     } catch (error) {
         console.log(error);
         res.json({

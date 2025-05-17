@@ -15,6 +15,15 @@ const categoriesSchema = new mongoose.Schema({
         ref: 'Category',
         default: null
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     deleted: {
         type: Boolean,
         default: false

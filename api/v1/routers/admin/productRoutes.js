@@ -31,4 +31,10 @@ route.put('/edit',
     uploadMidlewares.upload ,
     controller.editput);
 
+//[DELETE] api/v1/admin/products/delete/:id
+route.patch('/delete/:id', controller.delete);
+
+//[DELETE] api/v1/admin/products/delete/:id
+route.delete('/deletehard/:id', controller.deletehard);
+
 module.exports = route;

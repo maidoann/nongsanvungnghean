@@ -21,7 +21,7 @@ route.get('/edit/:id', controller.edit);
 route.put('/edit', controller.editput);
 
 //[DELETE] api/v1/admin/categories/delete/:id
-route.delete('/delete/:id', controller.delete);
+route.patch('/delete/:id', controller.delete);
 
 //[DELETE] api/v1/admin/categories/delete/:id
 route.delete('/deletehard/:id', controller.deletehard);
